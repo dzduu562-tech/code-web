@@ -27,7 +27,7 @@ class Courses extends Controller {
     /**
      * View course details
      */
-    public function view($slug = null) {
+    public function detail($slug = null) {
         if (!$slug) {
             redirect('courses');
         }
@@ -55,7 +55,7 @@ class Courses extends Controller {
             'is_enrolled' => $isEnrolled
         ];
 
-        $this->view('courses/view', $data);
+        $this->view('courses/detail', $data);
     }
 
     /**

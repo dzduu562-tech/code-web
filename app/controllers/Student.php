@@ -69,6 +69,48 @@ class Student extends Controller {
     }
 
     /**
+     * Assignments
+     */
+    public function assignments() {
+        $studentId = $_SESSION['user_id'];
+        
+        $data = [
+            'title' => 'Bài tập',
+            'assignments' => [] // TODO: Get student assignments
+        ];
+
+        $this->view('student/assignments', $data);
+    }
+
+    /**
+     * Quizzes
+     */
+    public function quizzes() {
+        $studentId = $_SESSION['user_id'];
+        
+        $data = [
+            'title' => 'Kiểm tra',
+            'quizzes' => [] // TODO: Get student quizzes
+        ];
+
+        $this->view('student/quizzes', $data);
+    }
+
+    /**
+     * Calendar
+     */
+    public function calendar() {
+        $studentId = $_SESSION['user_id'];
+        
+        $data = [
+            'title' => 'Lịch học',
+            'events' => [] // TODO: Get calendar events
+        ];
+
+        $this->view('student/calendar', $data);
+    }
+
+    /**
      * View course
      */
     public function course($slug = null) {

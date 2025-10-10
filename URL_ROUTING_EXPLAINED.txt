@@ -1,0 +1,205 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                   GIẢI THÍCH: MVC URL ROUTING                        ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+❌ HIỂU NHẦM:
+═══════════════════════════════════════════════════════════════════════
+Người dùng nghĩ URL này:
+   http://localhost/elearning/public/auth/register
+   
+Tương ứng với file:
+   public/auth/register.php  ← KHÔNG TỒN TẠI!
+
+
+✅ THỰC TẾ:
+═══════════════════════════════════════════════════════════════════════
+URL: http://localhost/elearning/public/auth/register
+
+ĐƯỢC XỬ LÝ BỞI:
+   1. public/index.php           ← Entry point
+   2. app/core/App.php           ← Router
+   3. app/controllers/Auth.php   ← Controller
+   4. app/views/auth/register.php ← View
+
+
+FLOW CHI TIẾT:
+═══════════════════════════════════════════════════════════════════════
+
+[1] Browser gửi request:
+    → http://localhost/elearning/public/auth/register
+
+[2] Apache nhận request, đọc public/.htaccess:
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+    
+    Chuyển thành:
+    → http://localhost/elearning/public/index.php?url=auth/register
+
+[3] File public/index.php chạy:
+    ```php
+    session_start();
+    define('ROOT', dirname(__DIR__));
+    define('APP', ROOT . '/app');
+    
+    require_once APP . '/helpers/functions.php';
+    $app = new App();  // ← Khởi động router
+    ```
+
+[4] Class App (Router) parse URL:
+    ```php
+    // app/core/App.php
+    $url = explode('/', 'auth/register');
+    // $url = ['auth', 'register']
+    
+    $controller = 'Auth';      // ← Lấy từ $url[0]
+    $method = 'register';      // ← Lấy từ $url[1]
+    ```
+
+[5] Load Controller:
+    ```php
+    require_once APP . '/controllers/Auth.php';
+    $controller = new Auth();
+    ```
+
+[6] Gọi method:
+    ```php
+    $controller->register();  // ← Gọi method register()
+    ```
+
+[7] Trong Auth::register():
+    ```php
+    public function register() {
+        // Xử lý logic...
+        
+        // Load view
+        $this->view('auth/register', $data);
+    }
+    ```
+
+[8] Method view() include file:
+    ```php
+    // app/core/Controller.php
+    public function view($view, $data = []) {
+        extract($data);
+        require_once APP . '/views/' . $view . '.php';
+        // → require_once 'app/views/auth/register.php'
+    }
+    ```
+
+[9] File app/views/auth/register.php render HTML
+    → Gửi về browser
+
+
+CẤU TRÚC FILE THỰC TẾ:
+═══════════════════════════════════════════════════════════════════════
+
+elearning/
+├── public/
+│   ├── index.php              ✅ Entry point (TẤT CẢ request vào đây)
+│   ├── .htaccess              ✅ Rewrite rules
+│   └── assets/                ✅ CSS, JS, images
+│       ├── css/
+│       ├── js/
+│       └── images/
+│
+├── app/
+│   ├── controllers/
+│   │   └── Auth.php           ✅ Controller xử lý login/register
+│   │
+│   ├── views/
+│   │   └── auth/
+│   │       ├── login.php      ✅ View login
+│   │       └── register.php   ✅ View register
+│   │
+│   └── core/
+│       └── App.php            ✅ Router
+│
+└── config/
+    ├── config.php             ✅ Cấu hình
+    └── database.php           ✅ Database config
+
+
+KHÔNG CÓ CÁC FILE SAU:
+═══════════════════════════════════════════════════════════════════════
+
+❌ public/auth/                 ← Folder KHÔNG TỒN TẠI!
+❌ public/auth/register.php     ← File KHÔNG TỒN TẠI!
+❌ public/auth/login.php        ← File KHÔNG TỒN TẠI!
+❌ public/register.php          ← File KHÔNG TỒN TẠI!
+❌ public/login.php             ← File KHÔNG TỒN TẠI!
+
+
+SO SÁNH VỚI CÁCH TRUYỀN THỐNG:
+═══════════════════════════════════════════════════════════════════════
+
+CÁCH CŨ (Không MVC):
+─────────────────────────────────────────────────────────────────────
+public/
+├── index.php
+├── register.php         ← File thật
+└── login.php            ← File thật
+
+URL: http://localhost/elearning/public/register.php
+     └─ Truy cập TRỰC TIẾP file register.php
+
+
+CÁCH MỚI (MVC):
+─────────────────────────────────────────────────────────────────────
+public/
+└── index.php            ← Entry point DUY NHẤT!
+
+app/
+├── controllers/
+│   └── Auth.php         ← Logic
+└── views/
+    └── auth/
+        └── register.php ← Giao diện
+
+URL: http://localhost/elearning/public/auth/register
+     └─ Route qua index.php → Auth → register() → view
+
+
+LÝ DO DÙNG MVC:
+═══════════════════════════════════════════════════════════════════════
+
+✅ Tách biệt Logic và Giao diện
+✅ URL đẹp (không cần .php)
+✅ Dễ bảo trì và mở rộng
+✅ Tái sử dụng code
+✅ Security tốt hơn (không truy cập trực tiếp file)
+✅ Chuẩn công nghiệp
+
+
+CÁCH KIỂM TRA:
+═══════════════════════════════════════════════════════════════════════
+
+1. Kiểm tra file tồn tại:
+   ✓ app/views/auth/register.php      ← Phải CÓ
+   ✗ public/auth/register.php         ← KHÔNG CẦN
+
+2. Kiểm tra controller:
+   ✓ app/controllers/Auth.php         ← Phải CÓ method register()
+
+3. Kiểm tra routing:
+   ✓ app/core/App.php                 ← Router phải hoạt động
+
+4. Test:
+   URL: http://localhost/elearning/public/auth/register
+   → Nếu lỗi 404: mod_rewrite chưa bật
+   → Nếu trang trắng: Lỗi PHP
+   → Nếu hiện form: OK!
+
+
+TÓM LẠI:
+═══════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────┐
+│  URL: /auth/register                                        │
+│  ≠ File: public/auth/register.php                          │
+│  = Route: Auth controller → register() → view             │
+└─────────────────────────────────────────────────────────────┘
+
+public/auth/ KHÔNG TỒN TẠI vì đây là MVC với URL Routing!
+
+Tất cả request → public/index.php → Router → Controller → View
+
+═══════════════════════════════════════════════════════════════════════

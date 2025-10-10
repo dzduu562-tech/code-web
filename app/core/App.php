@@ -35,6 +35,13 @@ class App {
         // Get params
         $this->params = $url ? array_values($url) : [];
 
+        // Check if method exists before calling
+        if (!method_exists($this->controller, $this->method)) {
+            // Method doesn't exist, show 404
+            http_response_code(404);
+            die("Error 404: Method '{$this->method}' not found in controller.");
+        }
+
         // Call controller method with params
         call_user_func_array([$this->controller, $this->method], $this->params);
     }

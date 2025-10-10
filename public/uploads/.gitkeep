@@ -1,0 +1,10 @@
+# Uploads directory
+# User-uploaded files will be stored here
+
+Subdirectories will be created automatically:
+- avatars/
+- courses/
+- lessons/
+- assignments/
+- documents/
+- videos/

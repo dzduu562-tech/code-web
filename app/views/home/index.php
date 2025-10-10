@@ -111,7 +111,7 @@
                             </div>
                             
                             <h5 class="card-title">
-                                <a href="<?= BASE_URL ?>/courses/<?= $course['slug'] ?>" class="text-decoration-none text-dark">
+                                <a href="<?= BASE_URL ?>/courses/detail/<?= $course['slug'] ?>" class="text-decoration-none text-dark">
                                     <?= e($course['title']) ?>
                                 </a>
                             </h5>

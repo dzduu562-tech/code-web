@@ -91,7 +91,7 @@ class Courses extends Controller {
             redirect('student/course/' . $course['slug']);
         } else {
             flash('error', 'Có lỗi xảy ra. Vui lòng thử lại!', 'danger');
-            redirect('courses/' . $course['slug']);
+            redirect('courses/detail/' . $course['slug']);
         }
     }
 }

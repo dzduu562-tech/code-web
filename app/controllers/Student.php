@@ -19,9 +19,25 @@ class Student extends Controller {
     public function dashboard() {
         $studentId = $_SESSION['user_id'];
         
+        // Get user info with fallback
+        $user = $this->userModel->getUserWithProfile($studentId);
+        if (!$user) {
+            $user = [
+                'id' => $studentId,
+                'full_name' => $_SESSION['user_name'] ?? 'User',
+                'email' => $_SESSION['user_email'] ?? '',
+                'role' => $_SESSION['role'] ?? 'student',
+                'avatar' => $_SESSION['avatar'] ?? '',
+                'profile' => [
+                    'total_xp' => 0,
+                    'level' => 1
+                ]
+            ];
+        }
+        
         $data = [
             'title' => 'Dashboard - Học sinh',
-            'user' => $this->userModel->getUserWithProfile($studentId),
+            'user' => $user,
             'my_courses' => $this->courseModel->getStudentCourses($studentId),
             'stats' => $this->getStudentStats($studentId),
             'recent_activities' => $this->getRecentActivities($studentId),

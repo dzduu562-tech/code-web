@@ -14,6 +14,13 @@ class Teacher extends Controller {
     }
 
     /**
+     * Default index - redirect to dashboard
+     */
+    public function index() {
+        redirect('teacher/dashboard');
+    }
+
+    /**
      * Teacher Dashboard
      */
     public function dashboard() {

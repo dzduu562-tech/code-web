@@ -14,6 +14,13 @@ class Admin extends Controller {
     }
 
     /**
+     * Default index - redirect to dashboard
+     */
+    public function index() {
+        redirect('admin/dashboard');
+    }
+
+    /**
      * Admin Dashboard
      */
     public function dashboard() {

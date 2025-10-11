@@ -1,0 +1,165 @@
+╔══════════════════════════════════════════════════════════════╗
+║     LỆNH GIT CUỐI CÙNG - COPY VÀ CHẠY NGAY!                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────┐
+│  BƯỚC 1: XÓA FOLDER CŨ                                      │
+└─────────────────────────────────────────────────────────────┘
+
+cd C:\xampp\htdocs
+rmdir /s /q elearning
+
+
+┌─────────────────────────────────────────────────────────────┐
+│  BƯỚC 2: CLONE CODE MỚI TỪ GITHUB                          │
+└─────────────────────────────────────────────────────────────┘
+
+git clone https://github.com/dzduu562-tech/code-web.git elearning
+
+
+┌─────────────────────────────────────────────────────────────┐
+│  BƯỚC 3: VÀO FOLDER VÀ CHECKOUT BRANCH                     │
+└─────────────────────────────────────────────────────────────┘
+
+cd elearning
+git checkout cursor/build-school-e-learning-website-c73d
+
+
+┌─────────────────────────────────────────────────────────────┐
+│  ✅ XONG! GIỜ CÓ CODE MỚI NHẤT!                            │
+└─────────────────────────────────────────────────────────────┘
+
+
+╔══════════════════════════════════════════════════════════════╗
+║     SAU KHI CLONE - IMPORT DATABASE                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+1. Mở: http://localhost/phpmyadmin
+
+2. Tạo database mới:
+   - Tên: elearning_db
+   - Collation: utf8mb4_unicode_ci
+   - Click "Create"
+
+3. Import schema:
+   - Click vào database "elearning_db"
+   - Tab "Import"
+   - Choose file: C:\xampp\htdocs\elearning\database\schema.sql
+   - Click "Import"
+   - ✅ Thấy 22 bảng!
+
+4. Import data:
+   - Tab "Import" lại
+   - Choose file: C:\xampp\htdocs\elearning\database\seed.sql
+   - Click "Import"
+   - ✅ Có 6 users!
+
+
+╔══════════════════════════════════════════════════════════════╗
+║     CẤU HÌNH APACHE (CHỈ LÀM 1 LẦN)                        ║
+╚══════════════════════════════════════════════════════════════╝
+
+1. Mở XAMPP Control Panel
+
+2. Apache → Config → httpd.conf
+
+3. Tìm dòng (Ctrl+F):
+   #LoadModule rewrite_module modules/mod_rewrite.so
+
+4. Xóa dấu #:
+   LoadModule rewrite_module modules/mod_rewrite.so
+
+5. Tìm dòng:
+   <Directory "C:/xampp/htdocs">
+       AllowOverride None
+
+6. Đổi None → All:
+   <Directory "C:/xampp/htdocs">
+       AllowOverride All
+
+7. Save file
+
+8. Stop Apache → Start Apache
+
+
+╔══════════════════════════════════════════════════════════════╗
+║     TEST WEBSITE                                             ║
+╚══════════════════════════════════════════════════════════════╝
+
+URL: http://localhost/elearning/public/
+
+
+╔══════════════════════════════════════════════════════════════╗
+║     TẠI KHOẢN ĐĂNG NHẬP                                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+Admin:
+  Email: admin@elearning.com
+  Password: Admin@123
+
+Giáo viên:
+  Email: gv.nguyen@school.edu.vn
+  Password: Admin@123
+
+Học sinh:
+  Email: hs.an@school.edu.vn
+  Password: Admin@123
+
+
+╔══════════════════════════════════════════════════════════════╗
+║     TEST CHỨC NĂNG GIÁO VIÊN                                ║
+╚══════════════════════════════════════════════════════════════╝
+
+1. TẠO KHÓA HỌC:
+   → Khóa học → Tạo khóa học mới
+   → Điền: Tiêu đề, Mô tả, Môn học
+   → Tạo khóa học
+   ✅ THÀNH CÔNG!
+
+2. TẠO BÀI TẬP:
+   → Bài tập → Tạo bài tập mới
+   → Chọn khóa học, điền form
+   → Tạo bài tập
+   ✅ THÀNH CÔNG!
+
+3. SỬA BÀI TẬP:
+   → Danh sách → Nút Sửa (icon pencil)
+   → Sửa thông tin → Lưu
+   ✅ THÀNH CÔNG!
+
+4. TẠO QUIZ:
+   → Quiz → Tạo Quiz mới
+   → Chọn khóa học, điền form
+   → Tạo Quiz
+   ✅ THÀNH CÔNG! → Tự động mở Quản lý Quiz
+
+5. THÊM CÂU HỎI:
+   → Nút "Thêm câu hỏi"
+   → Chọn loại: Trắc nghiệm
+   → Nhập câu hỏi + 4 đáp án
+   → Chọn đáp án đúng (A/B/C/D)
+   → Thêm câu hỏi
+   ✅ THÀNH CÔNG! Thấy trong danh sách!
+
+6. SỬA QUIZ:
+   → Danh sách → Nút Sửa
+   → Sửa thông tin → Lưu
+   ✅ THÀNH CÔNG!
+
+
+╔══════════════════════════════════════════════════════════════╗
+║     TẤT CẢ ĐÃ SỬA - KHÔNG CÒN LỖI!                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+✅ Không còn "Column not found"
+✅ Không còn "Parse error"
+✅ Không còn "Undefined array key"
+✅ Tất cả form hoạt động
+✅ Tất cả CRUD hoạt động
+
+COMMIT MỚI NHẤT: 84255f9
+TỔNG COMMITS: 35+
+
+→ CLONE VÀ SỬ DỤNG NGAY!
+
+════════════════════════════════════════════════════════════════

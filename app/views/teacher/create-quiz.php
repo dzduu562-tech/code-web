@@ -81,21 +81,6 @@
                                                max="10">
                                     </div>
 
-                                    <!-- Thời gian mở -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Mở từ</label>
-                                        <input type="datetime-local" 
-                                               name="available_from" 
-                                               class="form-control">
-                                    </div>
-
-                                    <!-- Thời gian đóng -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Đóng lúc</label>
-                                        <input type="datetime-local" 
-                                               name="available_to" 
-                                               class="form-control">
-                                    </div>
                                 </div>
 
                                 <!-- Tùy chọn -->

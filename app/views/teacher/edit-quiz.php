@@ -74,33 +74,6 @@
                                                max="10">
                                     </div>
 
-                                    <!-- Thời gian mở -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Mở từ</label>
-                                        <input type="datetime-local" 
-                                               name="available_from" 
-                                               class="form-control"
-                                               value="<?= $quiz['available_from'] ? date('Y-m-d\TH:i', strtotime($quiz['available_from'])) : '' ?>">
-                                    </div>
-
-                                    <!-- Thời gian đóng -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Đóng lúc</label>
-                                        <input type="datetime-local" 
-                                               name="available_to" 
-                                               class="form-control"
-                                               value="<?= $quiz['available_to'] ? date('Y-m-d\TH:i', strtotime($quiz['available_to'])) : '' ?>">
-                                    </div>
-
-                                    <!-- Trạng thái -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Trạng thái</label>
-                                        <select name="status" class="form-select">
-                                            <option value="published" <?= $quiz['status'] == 'published' ? 'selected' : '' ?>>Đã xuất bản</option>
-                                            <option value="draft" <?= $quiz['status'] == 'draft' ? 'selected' : '' ?>>Nháp</option>
-                                            <option value="archived" <?= $quiz['status'] == 'archived' ? 'selected' : '' ?>>Lưu trữ</option>
-                                        </select>
-                                    </div>
                                 </div>
 
 

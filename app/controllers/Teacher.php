@@ -229,11 +229,7 @@ class Teacher extends Controller {
             $data = [
                 'title' => clean($_POST['title'] ?? ''),
                 'description' => clean($_POST['description'] ?? ''),
-                'time_limit' => intval($_POST['time_limit'] ?? 30),
-                'max_attempts' => intval($_POST['max_attempts'] ?? 1),
-                'available_from' => $_POST['available_from'] ?? null,
-                'available_to' => $_POST['available_to'] ?? null,
-                'status' => $_POST['status'] ?? 'published'
+                'time_limit' => intval($_POST['time_limit'] ?? 30)
             ];
 
             $quizModel->update($id, $data);
@@ -449,7 +445,7 @@ class Teacher extends Controller {
             'teacher_id' => $teacherId,
             'level' => $_POST['level'] ?? 'beginner',
             'duration_hours' => intval($_POST['duration_hours'] ?? 0),
-            'status' => 'draft'
+            'is_published' => 0
         ];
 
         try {
@@ -457,8 +453,8 @@ class Teacher extends Controller {
             flash('success', 'Tạo khóa học thành công!', 'success');
             redirect('teacher/courses');
         } catch (Exception $e) {
-            flash('error', 'Có lỗi xảy ra khi tạo khóa học', 'danger');
-            redirect('teacher/create-course');
+            flash('error', 'Có lỗi xảy ra khi tạo khóa học: ' . $e->getMessage(), 'danger');
+            redirect('teacher/createCourse');
         }
     }
 
@@ -493,6 +489,10 @@ class Teacher extends Controller {
             'total_courses' => $totalCourses,
             'total_students' => $totalStudents,
             'total_lessons' => $totalLessons
+        ];
+    }
+}
+=> $totalLessons
         ];
     }
 }

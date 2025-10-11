@@ -213,11 +213,158 @@ class Teacher extends Controller {
         try {
             $quizId = $quizModel->create($data);
             flash('success', 'Tạo Quiz thành công! Hãy thêm câu hỏi.', 'success');
-            redirect('teacher/quizzes');
+            redirect('teacher/manageQuiz/' . $quizId);
         } catch (Exception $e) {
             flash('error', 'Có lỗi xảy ra: ' . $e->getMessage(), 'danger');
             redirect('teacher/createQuiz');
         }
+    }
+
+    /**
+     * Edit Quiz
+     */
+    public function editQuiz($id = null) {
+        if (!$id) {
+            redirect('teacher/quizzes');
+        }
+
+        $quizModel = $this->model('Quiz');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'title' => clean($_POST['title'] ?? ''),
+                'description' => clean($_POST['description'] ?? ''),
+                'time_limit' => intval($_POST['time_limit'] ?? 30),
+                'pass_score' => intval($_POST['pass_score'] ?? 70),
+                'max_attempts' => intval($_POST['max_attempts'] ?? 1),
+                'shuffle_questions' => isset($_POST['shuffle_questions']) ? 1 : 0,
+                'show_results' => isset($_POST['show_results']) ? 1 : 0,
+                'available_from' => $_POST['available_from'] ?? null,
+                'available_to' => $_POST['available_to'] ?? null,
+                'status' => $_POST['status'] ?? 'published'
+            ];
+
+            $quizModel->update($id, $data);
+            flash('success', 'Cập nhật Quiz thành công!', 'success');
+            redirect('teacher/manageQuiz/' . $id);
+        }
+
+        $quiz = $quizModel->getQuizWithStats($id);
+        
+        $this->view('teacher/edit-quiz', [
+            'title' => 'Sửa Quiz',
+            'quiz' => $quiz
+        ]);
+    }
+
+    /**
+     * Manage Quiz (View questions)
+     */
+    public function manageQuiz($id = null) {
+        if (!$id) {
+            redirect('teacher/quizzes');
+        }
+
+        $quizModel = $this->model('Quiz');
+        $quiz = $quizModel->getQuizWithStats($id);
+        $questions = $quizModel->getQuestions($id);
+
+        $this->view('teacher/manage-quiz', [
+            'title' => 'Quản lý Quiz',
+            'quiz' => $quiz,
+            'questions' => $questions
+        ]);
+    }
+
+    /**
+     * Add Question to Quiz
+     */
+    public function addQuestion($quizId = null) {
+        if (!$quizId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('teacher/quizzes');
+        }
+
+        $quizModel = $this->model('Quiz');
+        $questionType = $_POST['question_type'] ?? 'multiple_choice';
+        
+        // Prepare options based on type
+        $options = null;
+        $correctAnswer = '';
+        
+        if ($questionType === 'multiple_choice') {
+            $options = json_encode([
+                'A' => clean($_POST['option_a'] ?? ''),
+                'B' => clean($_POST['option_b'] ?? ''),
+                'C' => clean($_POST['option_c'] ?? ''),
+                'D' => clean($_POST['option_d'] ?? '')
+            ]);
+            $correctAnswer = $_POST['correct_answer_mc'] ?? 'A';
+        } elseif ($questionType === 'true_false') {
+            $correctAnswer = $_POST['correct_answer_tf'] ?? '1';
+        } else {
+            $correctAnswer = clean($_POST['correct_answer_sa'] ?? '');
+        }
+
+        $questionData = [
+            'question_text' => clean($_POST['question_text'] ?? ''),
+            'question_type' => $questionType,
+            'options' => $options,
+            'correct_answer' => $correctAnswer,
+            'points' => intval($_POST['points'] ?? 10),
+            'explanation' => clean($_POST['explanation'] ?? '')
+        ];
+
+        try {
+            $quizModel->addQuestion($quizId, $questionData);
+            flash('success', 'Thêm câu hỏi thành công!', 'success');
+        } catch (Exception $e) {
+            flash('error', 'Có lỗi: ' . $e->getMessage(), 'danger');
+        }
+
+        redirect('teacher/manageQuiz/' . $quizId);
+    }
+
+    /**
+     * Delete Question
+     */
+    public function deleteQuestion($id = null) {
+        if ($id) {
+            $db = Database::getInstance();
+            
+            // Get quiz_id before deleting
+            $question = $db->query("SELECT quiz_id FROM quiz_questions WHERE id = :id", ['id' => $id])->fetch();
+            
+            if ($question) {
+                $db->query("DELETE FROM quiz_questions WHERE id = :id", ['id' => $id]);
+                flash('success', 'Xóa câu hỏi thành công!', 'success');
+                redirect('teacher/manageQuiz/' . $question['quiz_id']);
+            }
+        }
+        redirect('teacher/quizzes');
+    }
+
+    /**
+     * Delete Quiz
+     */
+    public function deleteQuiz($id = null) {
+        if ($id) {
+            try {
+                $db = Database::getInstance();
+                
+                // Delete questions first
+                $db->query("DELETE FROM quiz_questions WHERE quiz_id = :id", ['id' => $id]);
+                $db->query("DELETE FROM quiz_attempts WHERE quiz_id = :id", ['id' => $id]);
+                
+                // Delete quiz
+                $quizModel = $this->model('Quiz');
+                $quizModel->delete($id);
+                
+                flash('success', 'Xóa Quiz thành công!', 'success');
+            } catch (Exception $e) {
+                flash('error', 'Có lỗi: ' . $e->getMessage(), 'danger');
+            }
+        }
+        redirect('teacher/quizzes');
     }
 
     /**

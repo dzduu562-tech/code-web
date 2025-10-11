@@ -62,4 +62,31 @@ class Quiz extends Model {
         
         return $db->query($sql, $questionData);
     }
+
+    /**
+     * Get quiz with stats
+     */
+    public function getQuizWithStats($id) {
+        $sql = "SELECT q.*, c.title as course_title,
+                COUNT(DISTINCT qq.id) as question_count,
+                COUNT(DISTINCT qa.id) as attempt_count,
+                AVG(qa.score) as avg_score
+                FROM {$this->table} q
+                LEFT JOIN courses c ON q.course_id = c.id
+                LEFT JOIN quiz_questions qq ON q.id = qq.quiz_id
+                LEFT JOIN quiz_attempts qa ON q.id = qa.quiz_id
+                WHERE q.id = :id
+                GROUP BY q.id";
+        
+        return $this->query($sql, ['id' => $id])->fetch();
+    }
+
+    /**
+     * Get questions for quiz
+     */
+    public function getQuestions($quizId) {
+        $db = Database::getInstance();
+        $sql = "SELECT * FROM quiz_questions WHERE quiz_id = :quiz_id ORDER BY id ASC";
+        return $db->query($sql, ['quiz_id' => $quizId])->fetchAll();
+    }
 }

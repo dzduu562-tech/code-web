@@ -49,6 +49,178 @@ class Admin extends Controller {
     }
 
     /**
+     * Add User
+     */
+    public function addUser() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->processAddUser();
+        }
+
+        $this->view('admin/add-user', ['title' => 'Thêm người dùng']);
+    }
+
+    /**
+     * Process add user
+     */
+    private function processAddUser() {
+        $data = [
+            'email' => clean($_POST['email'] ?? ''),
+            'password' => $_POST['password'] ?? '',
+            'full_name' => clean($_POST['full_name'] ?? ''),
+            'role' => $_POST['role'] ?? 'student',
+            'status' => 'active'
+        ];
+
+        try {
+            $this->userModel->create($data);
+            flash('success', 'Thêm người dùng thành công!', 'success');
+        } catch (Exception $e) {
+            flash('error', 'Có lỗi xảy ra: ' . $e->getMessage(), 'danger');
+        }
+
+        redirect('admin/users');
+    }
+
+    /**
+     * Delete User
+     */
+    public function deleteUser($id = null) {
+        if ($id && $id != $_SESSION['user_id']) {
+            $this->userModel->delete($id);
+            flash('success', 'Xóa người dùng thành công!', 'success');
+        }
+        redirect('admin/users');
+    }
+
+    /**
+     * Manage Subjects
+     */
+    public function subjects() {
+        $subjectModel = $this->model('Subject');
+        $subjects = $subjectModel->getAll('name ASC');
+
+        $data = [
+            'title' => 'Quản lý môn học',
+            'subjects' => $subjects
+        ];
+
+        $this->view('admin/subjects', $data);
+    }
+
+    /**
+     * Add Subject
+     */
+    public function addSubject() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $subjectModel = $this->model('Subject');
+            
+            $data = [
+                'name' => clean($_POST['name'] ?? ''),
+                'code' => clean($_POST['code'] ?? ''),
+                'description' => clean($_POST['description'] ?? ''),
+                'color' => $_POST['color'] ?? '#3B82F6',
+                'icon' => clean($_POST['icon'] ?? 'book'),
+                'status' => 'active'
+            ];
+
+            $subjectModel->create($data);
+            flash('success', 'Thêm môn học thành công!', 'success');
+            redirect('admin/subjects');
+        }
+
+        $this->view('admin/add-subject', ['title' => 'Thêm môn học']);
+    }
+
+    /**
+     * Manage Classes
+     */
+    public function classes() {
+        $classModel = $this->model('ClassModel');
+        $classes = $classModel->getActiveClasses();
+
+        $data = [
+            'title' => 'Quản lý lớp học',
+            'classes' => $classes
+        ];
+
+        $this->view('admin/classes', $data);
+    }
+
+    /**
+     * Add Class
+     */
+    public function addClass() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $classModel = $this->model('ClassModel');
+            
+            $data = [
+                'name' => clean($_POST['name'] ?? ''),
+                'code' => clean($_POST['code'] ?? ''),
+                'grade_level' => intval($_POST['grade_level'] ?? 10),
+                'academic_year' => clean($_POST['academic_year'] ?? date('Y') . '-' . (date('Y') + 1)),
+                'teacher_id' => $_POST['teacher_id'] ?? null,
+                'description' => clean($_POST['description'] ?? ''),
+                'status' => 'active'
+            ];
+
+            $classModel->insert($data);
+            flash('success', 'Thêm lớp học thành công!', 'success');
+            redirect('admin/classes');
+        }
+
+        $teachers = $this->userModel->getTeachers();
+        $this->view('admin/add-class', [
+            'title' => 'Thêm lớp học',
+            'teachers' => $teachers
+        ]);
+    }
+
+    /**
+     * Reports
+     */
+    public function reports() {
+        $data = [
+            'title' => 'Báo cáo & Thống kê',
+            'stats' => $this->getDetailedStats()
+        ];
+
+        $this->view('admin/reports', $data);
+    }
+
+    /**
+     * Activity Logs
+     */
+    public function logs() {
+        $db = Database::getInstance();
+        $logs = $db->query("SELECT al.*, u.full_name as user_name 
+                           FROM activity_logs al 
+                           LEFT JOIN users u ON al.user_id = u.id 
+                           ORDER BY al.created_at DESC 
+                           LIMIT 100")->fetchAll();
+
+        $data = [
+            'title' => 'Nhật ký hoạt động',
+            'logs' => $logs
+        ];
+
+        $this->view('admin/logs', $data);
+    }
+
+    /**
+     * Get detailed stats
+     */
+    private function getDetailedStats() {
+        $db = Database::getInstance();
+        
+        return [
+            'total_courses' => $db->query("SELECT COUNT(*) as c FROM courses")->fetch()['c'],
+            'total_lessons' => $db->query("SELECT COUNT(*) as c FROM lessons")->fetch()['c'],
+            'total_quizzes' => $db->query("SELECT COUNT(*) as c FROM quizzes")->fetch()['c'],
+            'total_assignments' => $db->query("SELECT COUNT(*) as c FROM assignments")->fetch()['c']
+        ];
+    }
+
+    /**
      * Manage Courses
      */
     public function courses() {

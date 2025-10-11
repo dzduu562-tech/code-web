@@ -70,6 +70,50 @@ class Teacher extends Controller {
     }
 
     /**
+     * Students
+     */
+    public function students() {
+        $data = [
+            'title' => 'Quản lý học sinh'
+        ];
+
+        $this->view('teacher/students', $data);
+    }
+
+    /**
+     * Assignments
+     */
+    public function assignments() {
+        $data = [
+            'title' => 'Quản lý bài tập'
+        ];
+
+        $this->view('teacher/assignments', $data);
+    }
+
+    /**
+     * Quizzes
+     */
+    public function quizzes() {
+        $data = [
+            'title' => 'Quản lý Quiz'
+        ];
+
+        $this->view('teacher/quizzes', $data);
+    }
+
+    /**
+     * Reports
+     */
+    public function reports() {
+        $data = [
+            'title' => 'Báo cáo & Thống kê'
+        ];
+
+        $this->view('teacher/reports', $data);
+    }
+
+    /**
      * Process create course
      */
     private function processCreateCourse() {

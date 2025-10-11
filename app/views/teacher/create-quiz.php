@@ -60,7 +60,7 @@
 
                                 <div class="row">
                                     <!-- Thời gian -->
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Thời gian (phút)</label>
                                         <input type="number" 
                                                name="time_limit" 
@@ -70,19 +70,8 @@
                                                max="300">
                                     </div>
 
-                                    <!-- Điểm đạt -->
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label fw-bold">Điểm đạt (%)</label>
-                                        <input type="number" 
-                                               name="pass_score" 
-                                               class="form-control" 
-                                               value="70"
-                                               min="0" 
-                                               max="100">
-                                    </div>
-
                                     <!-- Số lần thử -->
-                                    <div class="col-md-4 mb-3">
+                                    <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Số lần làm</label>
                                         <input type="number" 
                                                name="max_attempts" 

@@ -105,32 +105,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Tùy chọn -->
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold">Tùy chọn Quiz</label>
-                                    
-                                    <div class="form-check form-switch mb-2">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               name="shuffle_questions" 
-                                               id="shuffle"
-                                               <?= $quiz['shuffle_questions'] ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="shuffle">
-                                            Xáo trộn câu hỏi
-                                        </label>
-                                    </div>
-
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               name="show_results" 
-                                               id="showResults"
-                                               <?= $quiz['show_results'] ? 'checked' : '' ?>>
-                                        <label class="form-check-label" for="showResults">
-                                            Hiển thị kết quả ngay sau khi nộp
-                                        </label>
-                                    </div>
-                                </div>
 
                                 <hr>
 

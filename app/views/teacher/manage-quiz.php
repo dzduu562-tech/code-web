@@ -32,9 +32,9 @@
                         </div>
                         <div class="col-md-3">
                             <div class="text-center">
-                                <i class="bi bi-trophy text-warning" style="font-size: 2rem;"></i>
-                                <p class="mb-0 mt-2"><strong><?= $quiz['pass_score'] ?>%</strong></p>
-                                <small class="text-muted">Điểm đạt</small>
+                                <i class="bi bi-repeat text-warning" style="font-size: 2rem;"></i>
+                                <p class="mb-0 mt-2"><strong><?= $quiz['max_attempts'] ?> lần</strong></p>
+                                <small class="text-muted">Số lần làm</small>
                             </div>
                         </div>
                         <div class="col-md-3">

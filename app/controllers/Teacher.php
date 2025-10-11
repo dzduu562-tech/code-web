@@ -138,10 +138,8 @@ class Teacher extends Controller {
             'course_id' => $_POST['course_id'] ?? null,
             'title' => clean($_POST['title'] ?? ''),
             'description' => clean($_POST['description'] ?? ''),
-            'type' => $_POST['type'] ?? 'essay',
             'max_score' => intval($_POST['max_score'] ?? 100),
             'due_date' => $_POST['due_date'] ?? null,
-            'allow_late' => isset($_POST['allow_late']) ? 1 : 0,
             'instructions' => clean($_POST['instructions'] ?? ''),
             'status' => 'published'
         ];
@@ -365,6 +363,29 @@ class Teacher extends Controller {
             }
         }
         redirect('teacher/quizzes');
+    }
+
+    /**
+     * Delete Assignment
+     */
+    public function deleteAssignment($id = null) {
+        if ($id) {
+            try {
+                $db = Database::getInstance();
+                
+                // Delete submissions first
+                $db->query("DELETE FROM assignment_submissions WHERE assignment_id = :id", ['id' => $id]);
+                
+                // Delete assignment
+                $assignmentModel = $this->model('Assignment');
+                $assignmentModel->delete($id);
+                
+                flash('success', 'Xóa bài tập thành công!', 'success');
+            } catch (Exception $e) {
+                flash('error', 'Có lỗi: ' . $e->getMessage(), 'danger');
+            }
+        }
+        redirect('teacher/assignments');
     }
 
     /**

@@ -76,7 +76,7 @@
                                         <tr>
                                             <td>
                                                 <strong><?= e($assignment['title']) ?></strong><br>
-                                                <small class="text-muted"><?= ucfirst($assignment['type']) ?></small>
+                                                <small class="text-muted"><?= formatDate($assignment['created_at']) ?></small>
                                             </td>
                                             <td><?= e($assignment['course_title']) ?></td>
                                             <td><?= $assignment['due_date'] ? formatDate($assignment['due_date']) : 'Không giới hạn' ?></td>
@@ -94,6 +94,12 @@
                                                     <button class="btn btn-outline-success" title="Chấm điểm">
                                                         <i class="bi bi-check-circle"></i>
                                                     </button>
+                                                    <a href="<?= BASE_URL ?>/teacher/deleteAssignment/<?= $assignment['id'] ?>" 
+                                                       class="btn btn-outline-danger"
+                                                       onclick="return confirm('Xóa bài tập này?')" 
+                                                       title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>

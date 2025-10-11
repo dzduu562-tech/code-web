@@ -68,17 +68,6 @@
                                 </div>
 
                                 <div class="row">
-                                    <!-- Loại bài tập -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Loại bài tập</label>
-                                        <select name="type" class="form-select">
-                                            <option value="essay">Tự luận</option>
-                                            <option value="file_upload">Upload file</option>
-                                            <option value="text">Văn bản ngắn</option>
-                                            <option value="code">Lập trình</option>
-                                        </select>
-                                    </div>
-
                                     <!-- Điểm tối đa -->
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-bold">Điểm tối đa</label>
@@ -96,20 +85,6 @@
                                         <input type="datetime-local" 
                                                name="due_date" 
                                                class="form-control">
-                                    </div>
-
-                                    <!-- Cho phép nộp muộn -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold d-block">Tùy chọn</label>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" 
-                                                   type="checkbox" 
-                                                   name="allow_late" 
-                                                   id="allowLate">
-                                            <label class="form-check-label" for="allowLate">
-                                                Cho phép nộp muộn
-                                            </label>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -165,14 +140,13 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white border-0 py-3">
                             <h6 class="mb-0 fw-bold">
-                                <i class="bi bi-info-circle text-info"></i> Loại bài tập
+                                <i class="bi bi-info-circle text-info"></i> Thông tin
                             </h6>
                         </div>
                         <div class="card-body">
-                            <p class="small mb-2"><strong>Tự luận:</strong> Câu trả lời dạng văn bản dài</p>
-                            <p class="small mb-2"><strong>Upload file:</strong> Nộp file Word, PDF, hình ảnh</p>
-                            <p class="small mb-2"><strong>Văn bản ngắn:</strong> Trả lời ngắn gọn</p>
-                            <p class="small mb-0"><strong>Lập trình:</strong> Code, thuật toán</p>
+                            <p class="small mb-2">Học sinh sẽ nộp bài tập dưới dạng văn bản hoặc file đính kèm.</p>
+                            <p class="small mb-2">Giáo viên có thể chấm điểm và nhận xét trực tiếp.</p>
+                            <p class="small mb-0">Hệ thống sẽ gửi thông báo khi đến hạn nộp bài.</p>
                         </div>
                     </div>
                 </div>

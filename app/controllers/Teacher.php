@@ -140,8 +140,7 @@ class Teacher extends Controller {
             'description' => clean($_POST['description'] ?? ''),
             'max_score' => intval($_POST['max_score'] ?? 100),
             'due_date' => $_POST['due_date'] ?? null,
-            'instructions' => clean($_POST['instructions'] ?? ''),
-            'status' => 'published'
+            'instructions' => clean($_POST['instructions'] ?? '')
         ];
 
         try {
@@ -371,8 +370,7 @@ class Teacher extends Controller {
                 'description' => clean($_POST['description'] ?? ''),
                 'instructions' => clean($_POST['instructions'] ?? ''),
                 'max_score' => intval($_POST['max_score'] ?? 100),
-                'due_date' => $_POST['due_date'] ?? null,
-                'status' => $_POST['status'] ?? 'published'
+                'due_date' => $_POST['due_date'] ?? null
             ];
 
             $assignmentModel->update($id, $data);

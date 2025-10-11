@@ -71,15 +71,6 @@
                                                value="<?= $assignment['due_date'] ? date('Y-m-d\TH:i', strtotime($assignment['due_date'])) : '' ?>">
                                     </div>
 
-                                    <!-- Trạng thái -->
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Trạng thái</label>
-                                        <select name="status" class="form-select">
-                                            <option value="published" <?= $assignment['status'] == 'published' ? 'selected' : '' ?>>Đã xuất bản</option>
-                                            <option value="draft" <?= $assignment['status'] == 'draft' ? 'selected' : '' ?>>Nháp</option>
-                                            <option value="archived" <?= $assignment['status'] == 'archived' ? 'selected' : '' ?>>Lưu trữ</option>
-                                        </select>
-                                    </div>
                                 </div>
 
                                 <hr>

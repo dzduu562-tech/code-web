@@ -52,12 +52,17 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-outline-primary" title="Sửa">
+                                                    <a href="<?= BASE_URL ?>/admin/editClass/<?= $class['id'] ?>" 
+                                                       class="btn btn-outline-primary" 
+                                                       title="Sửa">
                                                         <i class="bi bi-pencil"></i>
-                                                    </button>
-                                                    <button class="btn btn-outline-danger" title="Xóa">
+                                                    </a>
+                                                    <a href="<?= BASE_URL ?>/admin/deleteClass/<?= $class['id'] ?>" 
+                                                       class="btn btn-outline-danger" 
+                                                       onclick="return confirm('Xóa lớp học này?')"
+                                                       title="Xóa">
                                                         <i class="bi bi-trash"></i>
-                                                    </button>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>

@@ -57,11 +57,12 @@
                                                        title="Xem">
                                                         <i class="bi bi-eye"></i>
                                                     </a>
-                                                    <button class="btn btn-outline-danger" 
-                                                            onclick="return confirm('Xóa khóa học này?')"
-                                                            title="Xóa">
+                                                    <a href="<?= BASE_URL ?>/admin/deleteCourse/<?= $course['id'] ?>" 
+                                                       class="btn btn-outline-danger" 
+                                                       onclick="return confirm('Bạn chắc chắn muốn xóa khóa học này? Tất cả dữ liệu liên quan sẽ bị xóa!')"
+                                                       title="Xóa">
                                                         <i class="bi bi-trash"></i>
-                                                    </button>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>

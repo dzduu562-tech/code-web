@@ -437,14 +437,12 @@ class Teacher extends Controller {
     private function processCreateCourse() {
         $teacherId = $_SESSION['user_id'];
         
-        // Only use fields that exist in DB
         $courseData = [
             'title' => clean($_POST['title'] ?? ''),
             'slug' => slug($_POST['title'] ?? ''),
             'description' => clean($_POST['description'] ?? ''),
             'teacher_id' => $teacherId,
-            'subject_id' => !empty($_POST['subject_id']) ? intval($_POST['subject_id']) : null,
-            'is_published' => 0
+            'subject_id' => !empty($_POST['subject_id']) ? intval($_POST['subject_id']) : null
         ];
 
         try {

@@ -1,0 +1,55 @@
+-- ═══════════════════════════════════════════════════════════════
+-- SỬA LỖI: Column 'status' not found in subjects table
+-- ═══════════════════════════════════════════════════════════════
+--
+-- LỖI: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status'
+--
+-- NGUYÊN NHÂN: Bảng subjects thiếu cột 'status'
+--
+-- CÁCH 1: THÊM CỘT STATUS (CHẠY LỆNH NÀY)
+-- CÁCH 2: IMPORT LẠI DATABASE (XEM CUỐI FILE)
+--
+-- ═══════════════════════════════════════════════════════════════
+
+USE elearning_db;
+
+-- Kiểm tra xem cột status đã tồn tại chưa
+-- Nếu chưa có, thêm vào
+ALTER TABLE subjects 
+ADD COLUMN IF NOT EXISTS status ENUM('active', 'inactive') DEFAULT 'active' 
+AFTER icon;
+
+-- Cập nhật tất cả subjects về active
+UPDATE subjects SET status = 'active' WHERE status IS NULL OR status = '';
+
+-- Kiểm tra kết quả
+SELECT 
+    COLUMN_NAME, 
+    DATA_TYPE, 
+    COLUMN_DEFAULT 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_SCHEMA = 'elearning_db' 
+  AND TABLE_NAME = 'subjects' 
+  AND COLUMN_NAME = 'status';
+
+-- ✅ Nếu thấy 1 dòng kết quả → Thành công!
+-- ❌ Nếu không thấy gì → Dùng CÁCH 2 bên dưới
+
+-- ═══════════════════════════════════════════════════════════════
+-- CÁCH 2: IMPORT LẠI DATABASE (NẾU CÁCH 1 KHÔNG ĐƯỢC)
+-- ═══════════════════════════════════════════════════════════════
+--
+-- BƯỚC 1: Drop database cũ
+-- DROP DATABASE IF EXISTS elearning_db;
+--
+-- BƯỚC 2: Tạo lại database
+-- CREATE DATABASE elearning_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+--
+-- BƯỚC 3: Import file IMPORT_MANUAL.txt
+-- (Copy toàn bộ nội dung file IMPORT_MANUAL.txt vào tab SQL)
+--
+-- ═══════════════════════════════════════════════════════════════
+
+-- ✅ SAU KHI SỬA XONG, TEST LẠI:
+-- http://localhost/elearning/public/teacher/createCourse
+-- → Không còn lỗi "Column not found"!

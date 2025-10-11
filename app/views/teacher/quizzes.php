@@ -82,13 +82,7 @@
                                             <td><?= $quiz['question_count'] ?? 0 ?> câu</td>
                                             <td><?= $quiz['attempt_count'] ?? 0 ?> lượt</td>
                                             <td>
-                                                <?php if ($quiz['avg_score']): ?>
-                                                    <span class="badge bg-<?= $quiz['avg_score'] >= 70 ? 'success' : 'warning' ?>">
-                                                        <?= round($quiz['avg_score'], 1) ?>%
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="text-muted">-</span>
-                                                <?php endif; ?>
+                                                <span class="text-muted">-</span>
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">

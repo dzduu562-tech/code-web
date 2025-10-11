@@ -88,12 +88,11 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-outline-primary" title="Xem">
-                                                        <i class="bi bi-eye"></i>
-                                                    </button>
-                                                    <button class="btn btn-outline-success" title="Chấm điểm">
-                                                        <i class="bi bi-check-circle"></i>
-                                                    </button>
+                                                    <a href="<?= BASE_URL ?>/teacher/editAssignment/<?= $assignment['id'] ?>" 
+                                                       class="btn btn-outline-primary" 
+                                                       title="Sửa">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
                                                     <a href="<?= BASE_URL ?>/teacher/deleteAssignment/<?= $assignment['id'] ?>" 
                                                        class="btn btn-outline-danger"
                                                        onclick="return confirm('Xóa bài tập này?')" 

@@ -105,7 +105,6 @@
                                     <div class="form-check form-switch mb-2">
                                         <input class="form-check-input" 
                                                type="checkbox" 
-                                               name="shuffle_questions" 
                                                id="shuffle"
                                                checked>
                                         <label class="form-check-label" for="shuffle">
@@ -116,7 +115,6 @@
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" 
                                                type="checkbox" 
-                                               name="show_results" 
                                                id="showResults"
                                                checked>
                                         <label class="form-check-label" for="showResults">

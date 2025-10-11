@@ -30,8 +30,7 @@ class Quiz extends Model {
     public function getTeacherQuizzes($teacherId) {
         $sql = "SELECT q.*, c.title as course_title,
                 COUNT(DISTINCT qq.id) as question_count,
-                COUNT(DISTINCT qa.id) as attempt_count,
-                AVG(qa.score) as avg_score
+                COUNT(DISTINCT qa.id) as attempt_count
                 FROM {$this->table} q
                 LEFT JOIN courses c ON q.course_id = c.id
                 LEFT JOIN quiz_questions qq ON q.id = qq.quiz_id
@@ -69,8 +68,7 @@ class Quiz extends Model {
     public function getQuizWithStats($id) {
         $sql = "SELECT q.*, c.title as course_title,
                 COUNT(DISTINCT qq.id) as question_count,
-                COUNT(DISTINCT qa.id) as attempt_count,
-                AVG(qa.score) as avg_score
+                COUNT(DISTINCT qa.id) as attempt_count
                 FROM {$this->table} q
                 LEFT JOIN courses c ON q.course_id = c.id
                 LEFT JOIN quiz_questions qq ON q.id = qq.quiz_id

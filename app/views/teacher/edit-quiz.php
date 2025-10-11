@@ -58,9 +58,7 @@
                                     <div class="col-md-4 mb-3">
                                         <label class="form-label fw-bold">Điểm đạt (%)</label>
                                         <input type="number" 
-                                               name="pass_score" 
                                                class="form-control" 
-                                               value="<?= $quiz['pass_score'] ?>"
                                                min="0" 
                                                max="100">
                                     </div>

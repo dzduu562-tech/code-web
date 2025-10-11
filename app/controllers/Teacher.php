@@ -201,8 +201,6 @@ class Teacher extends Controller {
             'time_limit' => intval($_POST['time_limit'] ?? 30),
             'pass_score' => intval($_POST['pass_score'] ?? 70),
             'max_attempts' => intval($_POST['max_attempts'] ?? 1),
-            'shuffle_questions' => isset($_POST['shuffle_questions']) ? 1 : 0,
-            'show_results' => isset($_POST['show_results']) ? 1 : 0,
             'available_from' => $_POST['available_from'] ?? null,
             'available_to' => $_POST['available_to'] ?? null,
             'status' => 'published'
@@ -360,6 +358,48 @@ class Teacher extends Controller {
             }
         }
         redirect('teacher/quizzes');
+    }
+
+    /**
+     * Edit Assignment
+     */
+    public function editAssignment($id = null) {
+        if (!$id) {
+            redirect('teacher/assignments');
+        }
+
+        $assignmentModel = $this->model('Assignment');
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'title' => clean($_POST['title'] ?? ''),
+                'description' => clean($_POST['description'] ?? ''),
+                'instructions' => clean($_POST['instructions'] ?? ''),
+                'max_score' => intval($_POST['max_score'] ?? 100),
+                'due_date' => $_POST['due_date'] ?? null,
+                'status' => $_POST['status'] ?? 'published'
+            ];
+
+            $assignmentModel->update($id, $data);
+            flash('success', 'Cập nhật bài tập thành công!', 'success');
+            redirect('teacher/assignments');
+        }
+
+        $assignment = $assignmentModel->find($id);
+        
+        // Get course title
+        $db = Database::getInstance();
+        $course = $db->query("SELECT title FROM courses WHERE id = :id", ['id' => $assignment['course_id']])->fetch();
+        $assignment['course_title'] = $course['title'] ?? 'N/A';
+        
+        // Get submission count
+        $submissions = $db->query("SELECT COUNT(*) as total FROM assignment_submissions WHERE assignment_id = :id", ['id' => $id])->fetch();
+        $assignment['total_submissions'] = $submissions['total'] ?? 0;
+        
+        $this->view('teacher/edit-assignment', [
+            'title' => 'Sửa bài tập',
+            'assignment' => $assignment
+        ]);
     }
 
     /**

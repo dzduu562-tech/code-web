@@ -198,10 +198,7 @@ class Teacher extends Controller {
             'title' => clean($_POST['title'] ?? ''),
             'description' => clean($_POST['description'] ?? ''),
             'time_limit' => intval($_POST['time_limit'] ?? 30),
-            'max_attempts' => intval($_POST['max_attempts'] ?? 1),
-            'available_from' => $_POST['available_from'] ?? null,
-            'available_to' => $_POST['available_to'] ?? null,
-            'status' => 'published'
+            'is_published' => 1
         ];
 
         try {

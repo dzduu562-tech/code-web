@@ -492,7 +492,3 @@ class Teacher extends Controller {
         ];
     }
 }
-=> $totalLessons
-        ];
-    }
-}

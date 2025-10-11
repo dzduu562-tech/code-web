@@ -26,9 +26,23 @@ class Teacher extends Controller {
     public function dashboard() {
         $teacherId = $_SESSION['user_id'];
         
+        // Get user with fallback
+        $user = $this->userModel->getUserWithProfile($teacherId);
+        
+        // Fallback if user data is incomplete
+        if (!$user || !isset($user['full_name'])) {
+            $user = [
+                'id' => $teacherId,
+                'full_name' => $_SESSION['full_name'] ?? 'Giáo viên',
+                'email' => $_SESSION['email'] ?? '',
+                'role' => 'teacher',
+                'avatar' => null
+            ];
+        }
+        
         $data = [
             'title' => 'Dashboard - Giáo viên',
-            'user' => $this->userModel->getUserWithProfile($teacherId),
+            'user' => $user,
             'my_courses' => $this->courseModel->getTeacherCourses($teacherId),
             'stats' => $this->getTeacherStats($teacherId)
         ];

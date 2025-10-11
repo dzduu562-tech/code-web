@@ -92,12 +92,22 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm">
-                                                    <button class="btn btn-outline-primary" title="Quản lý">
-                                                        <i class="bi bi-gear"></i>
-                                                    </button>
-                                                    <button class="btn btn-outline-info" title="Xem kết quả">
-                                                        <i class="bi bi-bar-chart"></i>
-                                                    </button>
+                                                    <a href="<?= BASE_URL ?>/teacher/manageQuiz/<?= $quiz['id'] ?>" 
+                                                       class="btn btn-outline-primary" 
+                                                       title="Quản lý câu hỏi">
+                                                        <i class="bi bi-list-ul"></i>
+                                                    </a>
+                                                    <a href="<?= BASE_URL ?>/teacher/editQuiz/<?= $quiz['id'] ?>" 
+                                                       class="btn btn-outline-success" 
+                                                       title="Sửa">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <a href="<?= BASE_URL ?>/teacher/deleteQuiz/<?= $quiz['id'] ?>" 
+                                                       class="btn btn-outline-danger"
+                                                       onclick="return confirm('Xóa quiz và tất cả câu hỏi?')" 
+                                                       title="Xóa">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>

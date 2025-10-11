@@ -437,23 +437,22 @@ class Teacher extends Controller {
     private function processCreateCourse() {
         $teacherId = $_SESSION['user_id'];
         
+        // Only use fields that exist in DB
         $courseData = [
             'title' => clean($_POST['title'] ?? ''),
             'slug' => slug($_POST['title'] ?? ''),
             'description' => clean($_POST['description'] ?? ''),
-            'subject_id' => $_POST['subject_id'] ?? null,
             'teacher_id' => $teacherId,
-            'level' => $_POST['level'] ?? 'beginner',
-            'duration_hours' => intval($_POST['duration_hours'] ?? 0),
+            'subject_id' => !empty($_POST['subject_id']) ? intval($_POST['subject_id']) : null,
             'is_published' => 0
         ];
 
         try {
-            $this->courseModel->insert($courseData);
+            $courseId = $this->courseModel->insert($courseData);
             flash('success', 'Tạo khóa học thành công!', 'success');
             redirect('teacher/courses');
         } catch (Exception $e) {
-            flash('error', 'Có lỗi xảy ra khi tạo khóa học: ' . $e->getMessage(), 'danger');
+            flash('error', 'Lỗi: ' . $e->getMessage(), 'danger');
             redirect('teacher/createCourse');
         }
     }

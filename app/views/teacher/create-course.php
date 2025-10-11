@@ -42,10 +42,10 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-12 mb-3">
                                         <label class="form-label fw-bold">Môn học</label>
                                         <select name="subject_id" class="form-select">
-                                            <option value="">-- Chọn môn học --</option>
+                                            <option value="">-- Chọn môn học (tùy chọn) --</option>
                                             <?php if (!empty($subjects)): ?>
                                                 <?php foreach ($subjects as $subject): ?>
                                                     <option value="<?= $subject['id'] ?>">
@@ -54,32 +54,6 @@
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
                                         </select>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Cấp độ</label>
-                                        <select name="level" class="form-select">
-                                            <option value="beginner">Cơ bản</option>
-                                            <option value="intermediate">Trung cấp</option>
-                                            <option value="advanced">Nâng cao</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Thời lượng (giờ)</label>
-                                        <input type="number" 
-                                               name="duration_hours" 
-                                               class="form-control" 
-                                               value="0"
-                                               min="0">
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-bold">Ảnh đại diện</label>
-                                        <input type="file" 
-                                               name="thumbnail" 
-                                               class="form-control"
-                                               accept="image/*">
                                     </div>
                                 </div>
 

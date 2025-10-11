@@ -49,14 +49,63 @@
             <!-- Quiz List -->
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-clipboard2-x text-muted" style="font-size: 5rem;"></i>
-                        <h5 class="mt-3 text-muted">Chưa có quiz nào</h5>
-                        <p class="text-muted">Tạo quiz đầu tiên để kiểm tra học sinh!</p>
-                        <a href="<?= BASE_URL ?>/teacher/createQuiz" class="btn btn-primary mt-3">
-                            <i class="bi bi-plus-circle"></i> Tạo Quiz
-                        </a>
-                    </div>
+                    <?php if (empty($quizzes)): ?>
+                        <div class="text-center py-5">
+                            <i class="bi bi-clipboard2-x text-muted" style="font-size: 5rem;"></i>
+                            <h5 class="mt-3 text-muted">Chưa có quiz nào</h5>
+                            <p class="text-muted">Tạo quiz đầu tiên để kiểm tra học sinh!</p>
+                            <a href="<?= BASE_URL ?>/teacher/createQuiz" class="btn btn-primary mt-3">
+                                <i class="bi bi-plus-circle"></i> Tạo Quiz
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Quiz</th>
+                                        <th>Khóa học</th>
+                                        <th>Câu hỏi</th>
+                                        <th>Lượt làm</th>
+                                        <th>Điểm TB</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($quizzes as $quiz): ?>
+                                        <tr>
+                                            <td>
+                                                <strong><?= e($quiz['title']) ?></strong><br>
+                                                <small class="text-muted"><?= $quiz['time_limit'] ?> phút</small>
+                                            </td>
+                                            <td><?= e($quiz['course_title']) ?></td>
+                                            <td><?= $quiz['question_count'] ?? 0 ?> câu</td>
+                                            <td><?= $quiz['attempt_count'] ?? 0 ?> lượt</td>
+                                            <td>
+                                                <?php if ($quiz['avg_score']): ?>
+                                                    <span class="badge bg-<?= $quiz['avg_score'] >= 70 ? 'success' : 'warning' ?>">
+                                                        <?= round($quiz['avg_score'], 1) ?>%
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary" title="Quản lý">
+                                                        <i class="bi bi-gear"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-info" title="Xem kết quả">
+                                                        <i class="bi bi-bar-chart"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -49,14 +49,59 @@
             <!-- Assignments List -->
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
-                    <div class="text-center py-5">
-                        <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
-                        <h5 class="mt-3 text-muted">Chưa có bài tập nào</h5>
-                        <p class="text-muted">Tạo bài tập đầu tiên cho học sinh!</p>
-                        <a href="<?= BASE_URL ?>/teacher/createAssignment" class="btn btn-primary mt-3">
-                            <i class="bi bi-plus-circle"></i> Tạo bài tập
-                        </a>
-                    </div>
+                    <?php if (empty($assignments)): ?>
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
+                            <h5 class="mt-3 text-muted">Chưa có bài tập nào</h5>
+                            <p class="text-muted">Tạo bài tập đầu tiên cho học sinh!</p>
+                            <a href="<?= BASE_URL ?>/teacher/createAssignment" class="btn btn-primary mt-3">
+                                <i class="bi bi-plus-circle"></i> Tạo bài tập
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Bài tập</th>
+                                        <th>Khóa học</th>
+                                        <th>Hạn nộp</th>
+                                        <th>Đã nộp</th>
+                                        <th>Chờ chấm</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($assignments as $assignment): ?>
+                                        <tr>
+                                            <td>
+                                                <strong><?= e($assignment['title']) ?></strong><br>
+                                                <small class="text-muted"><?= ucfirst($assignment['type']) ?></small>
+                                            </td>
+                                            <td><?= e($assignment['course_title']) ?></td>
+                                            <td><?= $assignment['due_date'] ? formatDate($assignment['due_date']) : 'Không giới hạn' ?></td>
+                                            <td><?= $assignment['total_submissions'] ?? 0 ?></td>
+                                            <td>
+                                                <span class="badge bg-warning">
+                                                    <?= $assignment['pending_count'] ?? 0 ?>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary" title="Xem">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-success" title="Chấm điểm">
+                                                        <i class="bi bi-check-circle"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

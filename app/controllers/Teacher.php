@@ -98,22 +98,126 @@ class Teacher extends Controller {
      * Assignments
      */
     public function assignments() {
+        $teacherId = $_SESSION['user_id'];
+        $assignmentModel = $this->model('Assignment');
+        
         $data = [
-            'title' => 'Quản lý bài tập'
+            'title' => 'Quản lý bài tập',
+            'assignments' => $assignmentModel->getTeacherAssignments($teacherId)
         ];
 
         $this->view('teacher/assignments', $data);
     }
 
     /**
+     * Create Assignment
+     */
+    public function createAssignment() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->processCreateAssignment();
+        }
+
+        $teacherId = $_SESSION['user_id'];
+        $courses = $this->courseModel->getTeacherCourses($teacherId);
+
+        $data = [
+            'title' => 'Tạo bài tập mới',
+            'courses' => $courses
+        ];
+
+        $this->view('teacher/create-assignment', $data);
+    }
+
+    /**
+     * Process Create Assignment
+     */
+    private function processCreateAssignment() {
+        $assignmentModel = $this->model('Assignment');
+        
+        $data = [
+            'course_id' => $_POST['course_id'] ?? null,
+            'title' => clean($_POST['title'] ?? ''),
+            'description' => clean($_POST['description'] ?? ''),
+            'type' => $_POST['type'] ?? 'essay',
+            'max_score' => intval($_POST['max_score'] ?? 100),
+            'due_date' => $_POST['due_date'] ?? null,
+            'allow_late' => isset($_POST['allow_late']) ? 1 : 0,
+            'instructions' => clean($_POST['instructions'] ?? ''),
+            'status' => 'published'
+        ];
+
+        try {
+            $assignmentModel->create($data);
+            flash('success', 'Tạo bài tập thành công!', 'success');
+            redirect('teacher/assignments');
+        } catch (Exception $e) {
+            flash('error', 'Có lỗi xảy ra: ' . $e->getMessage(), 'danger');
+            redirect('teacher/createAssignment');
+        }
+    }
+
+    /**
      * Quizzes
      */
     public function quizzes() {
+        $teacherId = $_SESSION['user_id'];
+        $quizModel = $this->model('Quiz');
+        
         $data = [
-            'title' => 'Quản lý Quiz'
+            'title' => 'Quản lý Quiz',
+            'quizzes' => $quizModel->getTeacherQuizzes($teacherId)
         ];
 
         $this->view('teacher/quizzes', $data);
+    }
+
+    /**
+     * Create Quiz
+     */
+    public function createQuiz() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->processCreateQuiz();
+        }
+
+        $teacherId = $_SESSION['user_id'];
+        $courses = $this->courseModel->getTeacherCourses($teacherId);
+
+        $data = [
+            'title' => 'Tạo Quiz mới',
+            'courses' => $courses
+        ];
+
+        $this->view('teacher/create-quiz', $data);
+    }
+
+    /**
+     * Process Create Quiz
+     */
+    private function processCreateQuiz() {
+        $quizModel = $this->model('Quiz');
+        
+        $data = [
+            'course_id' => $_POST['course_id'] ?? null,
+            'title' => clean($_POST['title'] ?? ''),
+            'description' => clean($_POST['description'] ?? ''),
+            'time_limit' => intval($_POST['time_limit'] ?? 30),
+            'pass_score' => intval($_POST['pass_score'] ?? 70),
+            'max_attempts' => intval($_POST['max_attempts'] ?? 1),
+            'shuffle_questions' => isset($_POST['shuffle_questions']) ? 1 : 0,
+            'show_results' => isset($_POST['show_results']) ? 1 : 0,
+            'available_from' => $_POST['available_from'] ?? null,
+            'available_to' => $_POST['available_to'] ?? null,
+            'status' => 'published'
+        ];
+
+        try {
+            $quizId = $quizModel->create($data);
+            flash('success', 'Tạo Quiz thành công! Hãy thêm câu hỏi.', 'success');
+            redirect('teacher/quizzes');
+        } catch (Exception $e) {
+            flash('error', 'Có lỗi xảy ra: ' . $e->getMessage(), 'danger');
+            redirect('teacher/createQuiz');
+        }
     }
 
     /**

@@ -1,0 +1,509 @@
+-- ═══════════════════════════════════════════════════════════════
+-- HƯỚNG DẪN IMPORT THỦ CÔNG
+-- ═══════════════════════════════════════════════════════════════
+-- 
+-- BƯỚC 1: Mở phpMyAdmin: http://localhost/phpmyadmin
+-- BƯỚC 2: Tạo database mới:
+--         - Tên: elearning_db
+--         - Collation: utf8mb4_unicode_ci
+--         - Click "Create"
+-- BƯỚC 3: Click vào database "elearning_db" vừa tạo
+-- BƯỚC 4: Chọn tab "SQL"
+-- BƯỚC 5: Copy TOÀN BỘ nội dung file này
+-- BƯỚC 6: Paste vào ô SQL
+-- BƯỚC 7: Click "Go" hoặc "Thực thi"
+-- BƯỚC 8: ✅ Kiểm tra có 22 bảng và 6 users!
+--
+-- ═══════════════════════════════════════════════════════════════
+
+-- Chọn database
+USE elearning_db;
+
+-- ═══════════════════════════════════════════════════════════════
+-- PHẦN 1: TẠO CẤU TRÚC BẢNG (SCHEMA)
+-- ═══════════════════════════════════════════════════════════════
+
+-- Drop tables if exist (để import lại từ đầu)
+DROP TABLE IF EXISTS quiz_attempts;
+DROP TABLE IF EXISTS quiz_answers;
+DROP TABLE IF EXISTS quiz_questions;
+DROP TABLE IF EXISTS quizzes;
+DROP TABLE IF EXISTS assignment_submissions;
+DROP TABLE IF EXISTS assignments;
+DROP TABLE IF EXISTS lesson_progress;
+DROP TABLE IF EXISTS lesson_resources;
+DROP TABLE IF EXISTS lessons;
+DROP TABLE IF EXISTS forum_replies;
+DROP TABLE IF EXISTS forum_posts;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS badges;
+DROP TABLE IF EXISTS user_badges;
+DROP TABLE IF EXISTS enrollments;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS class_students;
+DROP TABLE IF EXISTS classes;
+DROP TABLE IF EXISTS subjects;
+DROP TABLE IF EXISTS student_profiles;
+DROP TABLE IF EXISTS teacher_profiles;
+DROP TABLE IF EXISTS users;
+
+-- Users
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'teacher', 'student', 'parent') NOT NULL,
+    avatar VARCHAR(500) DEFAULT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    address TEXT,
+    date_of_birth DATE DEFAULT NULL,
+    gender ENUM('male', 'female', 'other') DEFAULT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    last_login DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_role (role)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Teacher Profiles
+CREATE TABLE teacher_profiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL,
+    employee_id VARCHAR(50) UNIQUE,
+    department VARCHAR(100),
+    position VARCHAR(100),
+    specialization TEXT,
+    bio TEXT,
+    education TEXT,
+    experience_years INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Student Profiles
+CREATE TABLE student_profiles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL,
+    student_id VARCHAR(50) UNIQUE,
+    parent_email VARCHAR(255),
+    parent_phone VARCHAR(20),
+    grade_level INT,
+    enrollment_date DATE,
+    total_xp INT DEFAULT 0,
+    level INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Subjects
+CREATE TABLE subjects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    color VARCHAR(7) DEFAULT '#007bff',
+    icon VARCHAR(50) DEFAULT 'book',
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Classes
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    grade_level INT NOT NULL,
+    teacher_id INT DEFAULT NULL,
+    room VARCHAR(50),
+    schedule TEXT,
+    academic_year VARCHAR(20),
+    max_students INT DEFAULT 40,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_grade (grade_level)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Class Students (Many-to-Many)
+CREATE TABLE class_students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT NOT NULL,
+    student_id INT NOT NULL,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_class_student (class_id, student_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Courses
+CREATE TABLE courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    teacher_id INT NOT NULL,
+    subject_id INT DEFAULT NULL,
+    level ENUM('beginner', 'intermediate', 'advanced') DEFAULT 'beginner',
+    thumbnail VARCHAR(500) DEFAULT NULL,
+    duration_hours INT DEFAULT 0,
+    status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+    is_published TINYINT(1) DEFAULT 0,
+    view_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL,
+    INDEX idx_teacher (teacher_id),
+    INDEX idx_subject (subject_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Enrollments
+CREATE TABLE enrollments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    student_id INT NOT NULL,
+    progress DECIMAL(5, 2) DEFAULT 0.00,
+    status ENUM('active', 'completed', 'dropped') DEFAULT 'active',
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at DATETIME DEFAULT NULL,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_enrollment (course_id, student_id),
+    INDEX idx_student (student_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Lessons
+CREATE TABLE lessons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    content LONGTEXT,
+    lesson_type ENUM('video', 'text', 'quiz', 'assignment') DEFAULT 'text',
+    video_url VARCHAR(500) DEFAULT NULL,
+    duration_minutes INT DEFAULT 0,
+    order_index INT DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    INDEX idx_course (course_id),
+    INDEX idx_order (order_index)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Lesson Resources
+CREATE TABLE lesson_resources (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lesson_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    resource_type ENUM('pdf', 'doc', 'slide', 'link', 'other') DEFAULT 'pdf',
+    file_path VARCHAR(500) DEFAULT NULL,
+    file_size INT DEFAULT 0,
+    download_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE,
+    INDEX idx_lesson (lesson_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Lesson Progress
+CREATE TABLE lesson_progress (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lesson_id INT NOT NULL,
+    student_id INT NOT NULL,
+    is_completed TINYINT(1) DEFAULT 0,
+    progress_percent DECIMAL(5, 2) DEFAULT 0.00,
+    time_spent INT DEFAULT 0,
+    last_position INT DEFAULT 0,
+    completed_at DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_progress (lesson_id, student_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Quizzes
+CREATE TABLE quizzes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    lesson_id INT DEFAULT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    quiz_type ENUM('practice', 'graded', 'exam') DEFAULT 'practice',
+    time_limit INT DEFAULT NULL,
+    passing_score DECIMAL(5, 2) DEFAULT 60.00,
+    max_attempts INT DEFAULT 0,
+    shuffle_questions TINYINT(1) DEFAULT 1,
+    shuffle_answers TINYINT(1) DEFAULT 1,
+    show_correct_answers TINYINT(1) DEFAULT 1,
+    is_published TINYINT(1) DEFAULT 1,
+    available_from DATETIME DEFAULT NULL,
+    available_until DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE,
+    INDEX idx_course (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Quiz Questions
+CREATE TABLE quiz_questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT NOT NULL,
+    question_text TEXT NOT NULL,
+    question_type ENUM('multiple_choice', 'true_false', 'short_answer', 'essay') DEFAULT 'multiple_choice',
+    points DECIMAL(5, 2) DEFAULT 1.00,
+    order_index INT DEFAULT 0,
+    explanation TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    INDEX idx_quiz (quiz_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Quiz Answers (For MCQ/True-False)
+CREATE TABLE quiz_answers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT NOT NULL,
+    answer_text TEXT NOT NULL,
+    is_correct TINYINT(1) DEFAULT 0,
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (question_id) REFERENCES quiz_questions(id) ON DELETE CASCADE,
+    INDEX idx_question (question_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Quiz Attempts
+CREATE TABLE quiz_attempts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT NOT NULL,
+    student_id INT NOT NULL,
+    score DECIMAL(5, 2) DEFAULT 0.00,
+    max_score DECIMAL(5, 2) DEFAULT 0.00,
+    percentage DECIMAL(5, 2) DEFAULT 0.00,
+    time_spent INT DEFAULT 0,
+    answers_data JSON,
+    is_passed TINYINT(1) DEFAULT 0,
+    started_at DATETIME DEFAULT NULL,
+    submitted_at DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_quiz (quiz_id),
+    INDEX idx_student (student_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Assignments
+CREATE TABLE assignments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    lesson_id INT DEFAULT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    instructions TEXT,
+    attachment VARCHAR(500) DEFAULT NULL,
+    max_score DECIMAL(5, 2) DEFAULT 100.00,
+    due_date DATETIME DEFAULT NULL,
+    allow_late TINYINT(1) DEFAULT 1,
+    late_penalty DECIMAL(5, 2) DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE SET NULL,
+    INDEX idx_course (course_id),
+    INDEX idx_due_date (due_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Assignment submissions
+CREATE TABLE assignment_submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    assignment_id INT NOT NULL,
+    student_id INT NOT NULL,
+    submission_text LONGTEXT,
+    attachment VARCHAR(500) DEFAULT NULL,
+    score DECIMAL(5, 2) DEFAULT NULL,
+    feedback TEXT,
+    status ENUM('pending', 'graded', 'late', 'missing') DEFAULT 'pending',
+    submitted_at DATETIME DEFAULT NULL,
+    graded_at DATETIME DEFAULT NULL,
+    graded_by INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (graded_by) REFERENCES users(id) ON DELETE SET NULL,
+    UNIQUE KEY unique_submission (assignment_id, student_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Badges
+CREATE TABLE badges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    icon VARCHAR(100),
+    criteria TEXT,
+    points INT DEFAULT 0,
+    badge_type ENUM('achievement', 'milestone', 'special') DEFAULT 'achievement',
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User Badges (Many-to-Many)
+CREATE TABLE user_badges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    badge_id INT NOT NULL,
+    earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_badge (user_id, badge_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Notifications
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT,
+    notification_type ENUM('info', 'success', 'warning', 'danger') DEFAULT 'info',
+    link VARCHAR(500) DEFAULT NULL,
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user (user_id),
+    INDEX idx_read (is_read)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Forum Posts
+CREATE TABLE forum_posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    is_pinned TINYINT(1) DEFAULT 0,
+    is_locked TINYINT(1) DEFAULT 0,
+    view_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_course (course_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Forum Replies
+CREATE TABLE forum_replies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    user_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES forum_posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_post (post_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ═══════════════════════════════════════════════════════════════
+-- PHẦN 2: DỮ LIỆU MẪU (SEED DATA)
+-- ═══════════════════════════════════════════════════════════════
+
+-- Insert Admin User
+INSERT INTO users (email, password, full_name, role, phone, gender, is_active) VALUES
+('admin@elearning.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin Hệ Thống', 'admin', '0901234567', 'male', 1);
+
+-- Insert Teachers
+INSERT INTO users (email, password, full_name, role, phone, date_of_birth, gender, is_active) VALUES
+('gv.nguyen@school.edu.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nguyễn Văn A', 'teacher', '0912345678', '1985-05-15', 'male', 1),
+('gv.tran@school.edu.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Thị B', 'teacher', '0923456789', '1988-08-20', 'female', 1);
+
+-- Insert Students
+INSERT INTO users (email, password, full_name, role, phone, date_of_birth, gender, is_active) VALUES
+('hs.an@school.edu.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nguyễn Văn An', 'student', '0934567890', '2008-01-10', 'male', 1),
+('hs.binh@school.edu.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Thị Bình', 'student', '0945678901', '2008-03-15', 'female', 1),
+('hs.chau@school.edu.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Lê Văn Châu', 'student', '0956789012', '2008-05-20', 'male', 1);
+
+-- Insert Teacher Profiles
+INSERT INTO teacher_profiles (user_id, employee_id, department, position, specialization, education, experience_years) VALUES
+(2, 'GV001', 'Khoa Toán', 'Giáo viên chính', 'Toán Học', 'Thạc sĩ Toán Học', 10),
+(3, 'GV002', 'Khoa Văn', 'Giáo viên chính', 'Ngữ Văn', 'Cử nhân Ngữ Văn', 8);
+
+-- Insert Student Profiles
+INSERT INTO student_profiles (user_id, student_id, parent_email, parent_phone, grade_level, enrollment_date, total_xp, level) VALUES
+(4, 'HS2024001', 'phuhuynh.an@gmail.com', '0967890123', 10, '2024-09-01', 120, 2),
+(5, 'HS2024002', 'phuhuynh.binh@gmail.com', '0978901234', 10, '2024-09-01', 80, 1),
+(6, 'HS2024003', 'phuhuynh.chau@gmail.com', '0989012345', 10, '2024-09-01', 150, 3);
+
+-- Insert Subjects
+INSERT INTO subjects (name, code, description, color, icon, is_active) VALUES
+('Toán Học', 'MATH', 'Môn Toán từ cơ bản đến nâng cao', '#007bff', 'calculator', 1),
+('Ngữ Văn', 'LITERATURE', 'Văn học và kỹ năng viết', '#28a745', 'book-open', 1),
+('Tiếng Anh', 'ENGLISH', 'Tiếng Anh giao tiếp và học thuật', '#17a2b8', 'globe', 1),
+('Vật Lý', 'PHYSICS', 'Khoa học vật lý', '#ffc107', 'atom', 1),
+('Hóa Học', 'CHEMISTRY', 'Hóa học cơ bản và nâng cao', '#dc3545', 'flask', 1);
+
+-- Insert Classes
+INSERT INTO classes (name, code, grade_level, teacher_id, room, academic_year, max_students, is_active) VALUES
+('Lớp 10A1', '10A1', 10, 2, 'A101', '2024-2025', 40, 1),
+('Lớp 10A2', '10A2', 10, 3, 'A102', '2024-2025', 40, 1);
+
+-- Insert Class Students
+INSERT INTO class_students (class_id, student_id) VALUES
+(1, 4),
+(1, 5),
+(2, 6);
+
+-- Insert Courses
+INSERT INTO courses (title, slug, description, teacher_id, subject_id, level, status, is_published, duration_hours) VALUES
+('Toán 10 - Đại Số', 'toan-10-dai-so', 'Khóa học Đại số lớp 10 cơ bản', 2, 1, 'beginner', 'published', 1, 40),
+('Ngữ Văn 10', 'ngu-van-10', 'Văn học Việt Nam lớp 10', 3, 2, 'beginner', 'published', 1, 35);
+
+-- Insert Enrollments
+INSERT INTO enrollments (course_id, student_id, progress, status) VALUES
+(1, 4, 25.50, 'active'),
+(1, 5, 15.00, 'active'),
+(2, 4, 30.00, 'active');
+
+-- Insert Lessons
+INSERT INTO lessons (course_id, title, slug, content, lesson_type, duration_minutes, order_index, is_published) VALUES
+(1, 'Bài 1: Giới thiệu về tập hợp', 'bai-1-gioi-thieu-tap-hop', '<h3>Tập hợp là gì?</h3><p>Tập hợp là một khái niệm cơ bản trong toán học...</p>', 'text', 45, 1, 1),
+(1, 'Bài 2: Các phép toán tập hợp', 'bai-2-phep-toan-tap-hop', '<h3>Phép hợp và phép giao</h3><p>Trong bài này chúng ta sẽ học về...</p>', 'text', 50, 2, 1),
+(2, 'Bài 1: Văn học dân gian Việt Nam', 'bai-1-van-hoc-dan-gian', '<h3>Tổng quan văn học dân gian</h3><p>Văn học dân gian là...</p>', 'text', 60, 1, 1);
+
+-- Insert Badges
+INSERT INTO badges (name, description, icon, criteria, points, badge_type, is_active) VALUES
+('Người mới bắt đầu', 'Hoàn thành khóa học đầu tiên', 'star', 'Hoàn thành 1 khóa học', 10, 'achievement', 1),
+('Học giả', 'Hoàn thành 5 khóa học', 'book', 'Hoàn thành 5 khóa học', 50, 'milestone', 1),
+('Siêu sao', 'Đạt 1000 XP', 'trophy', 'Tích lũy 1000 XP', 100, 'special', 1);
+
+-- Insert Sample Notifications
+INSERT INTO notifications (user_id, title, message, notification_type, link, is_read) VALUES
+(4, 'Chào mừng!', 'Chào mừng bạn đến với hệ thống E-Learning', 'success', '/student/dashboard', 1),
+(4, 'Bài tập mới', 'Giáo viên đã giao bài tập mới cho khóa Toán 10', 'info', '/student/assignments', 0);
+
+-- ═══════════════════════════════════════════════════════════════
+-- ✅ HOÀN TẤT! IMPORT THÀNH CÔNG!
+-- ═══════════════════════════════════════════════════════════════
+-- 
+-- Kiểm tra:
+-- - Có 22 bảng
+-- - Có 6 users (1 admin, 2 GV, 3 HS)
+-- - Có 2 khóa học mẫu
+-- - Có 3 bài học mẫu
+--
+-- Tài khoản đăng nhập:
+-- Admin: admin@elearning.com / Admin@123
+-- GV: gv.nguyen@school.edu.vn / Admin@123
+-- HS: hs.an@school.edu.vn / Admin@123
+--
+-- ═══════════════════════════════════════════════════════════════

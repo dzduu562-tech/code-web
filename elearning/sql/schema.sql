@@ -1,0 +1,180 @@
+-- MySQL schema for E-Learning (lightweight)
+DROP TABLE IF EXISTS answers;
+DROP TABLE IF EXISTS quiz_attempts;
+DROP TABLE IF EXISTS options;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS quizzes;
+DROP TABLE IF EXISTS submissions;
+DROP TABLE IF EXISTS assignments;
+DROP TABLE IF EXISTS lesson_views;
+DROP TABLE IF EXISTS resources;
+DROP TABLE IF EXISTS lessons;
+DROP TABLE IF EXISTS chapters;
+DROP TABLE IF EXISTS enrollments;
+DROP TABLE IF EXISTS forum_posts;
+DROP TABLE IF EXISTS forum_threads;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(160) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('admin','teacher','student') NOT NULL DEFAULT 'student',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE courses (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  subject VARCHAR(100) NOT NULL,
+  teacher_id INT NOT NULL,
+  description TEXT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE chapters (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  course_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  position INT NOT NULL DEFAULT 1,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE lessons (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  chapter_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  content_html MEDIUMTEXT,
+  video_url VARCHAR(255),
+  position INT NOT NULL DEFAULT 1,
+  FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE resources (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  lesson_id INT NOT NULL,
+  file_path VARCHAR(255) NOT NULL,
+  file_name VARCHAR(200) NOT NULL,
+  FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE enrollments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  course_id INT NOT NULL,
+  progress_percent INT NOT NULL DEFAULT 0,
+  last_view_at DATETIME NULL,
+  UNIQUE KEY uniq_user_course(user_id, course_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE assignments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  course_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  due_at DATETIME NULL,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE submissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  assignment_id INT NOT NULL,
+  student_id INT NOT NULL,
+  file_path VARCHAR(255),
+  note VARCHAR(255),
+  score INT NULL,
+  graded_at DATETIME NULL,
+  UNIQUE KEY uniq_assignment_student(assignment_id, student_id),
+  FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE quizzes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  lesson_id INT NOT NULL,
+  title VARCHAR(200) NOT NULL,
+  FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE questions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT NOT NULL,
+  text VARCHAR(500) NOT NULL,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE options (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  question_id INT NOT NULL,
+  text VARCHAR(500) NOT NULL,
+  is_correct TINYINT(1) NOT NULL DEFAULT 0,
+  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE quiz_attempts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  quiz_id INT NOT NULL,
+  user_id INT NOT NULL,
+  score INT NOT NULL,
+  started_at DATETIME NOT NULL,
+  finished_at DATETIME NOT NULL,
+  FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE answers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  attempt_id INT NOT NULL,
+  question_id INT NOT NULL,
+  option_id INT NOT NULL,
+  FOREIGN KEY (attempt_id) REFERENCES quiz_attempts(id) ON DELETE CASCADE,
+  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
+  FOREIGN KEY (option_id) REFERENCES options(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE forum_threads (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  course_id INT NULL,
+  lesson_id INT NULL,
+  author_id INT NULL,
+  title VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE SET NULL,
+  FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE SET NULL,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE forum_posts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  thread_id INT NOT NULL,
+  author_id INT NULL,
+  content TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (thread_id) REFERENCES forum_threads(id) ON DELETE CASCADE,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  payload_json JSON NOT NULL,
+  is_read TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE lesson_views (
+  user_id INT NOT NULL,
+  lesson_id INT NOT NULL,
+  viewed_at DATETIME NOT NULL,
+  PRIMARY KEY (user_id, lesson_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

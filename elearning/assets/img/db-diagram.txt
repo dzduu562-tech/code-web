@@ -1,0 +1,23 @@
+Simple DB diagram (text)
+users (id, name, email, password_hash, role, created_at)
+  |--< courses.teacher_id
+courses (id, title, subject, teacher_id, description, created_at)
+  |--< chapters.course_id
+chapters (id, course_id, title, position)
+  |--< lessons.chapter_id
+lessons (id, chapter_id, title, content_html, video_url, position)
+  |--< resources.lesson_id
+  |--< quizzes.lesson_id
+quizzes (id, lesson_id, title)
+  |--< questions.quiz_id
+questions (id, quiz_id, text)
+  |--< options.question_id
+quiz_attempts (id, quiz_id, user_id, score, started_at, finished_at)
+  |--< answers.attempt_id
+assignments (id, course_id, title, description, due_at)
+  |--< submissions.assignment_id (student_id -> users)
+forum_threads (id, course_id, lesson_id, author_id, title, created_at)
+  |--< forum_posts.thread_id
+notifications (id, user_id, type, payload_json, is_read, created_at)
+enrollments (id, user_id, course_id, progress_percent, last_view_at)
+lesson_views (user_id, lesson_id, viewed_at)

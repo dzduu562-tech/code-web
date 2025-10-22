@@ -1,0 +1,11 @@
+<?php
+return [
+    'db_host' => '127.0.0.1',
+    'db_name' => 'elearning',
+    'db_user' => 'root',
+    'db_pass' => '',
+    'db_charset' => 'utf8mb4',
+    'base_url' => '/elearning/public/index.php',
+    'env' => 'production',
+    'upload_max_mb' => 50,
+];

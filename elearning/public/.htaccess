@@ -1,0 +1,2 @@
+# Optional for Apache pretty index if needed
+Options -Indexes

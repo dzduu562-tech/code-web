@@ -1,0 +1,211 @@
+=====================================================
+DANH SÁCH ĐẦY ĐỦ CÁC FILE ĐÃ UPLOAD LÊN GITHUB
+=====================================================
+
+Repository: https://github.com/dzduu562-tech/code-web
+Branch: cursor/build-school-e-learning-website-c73d
+Commit: 6c7ca03
+
+Tổng số: 48 files
+
+=====================================================
+1. ROOT FILES (7 files)
+=====================================================
+[1]  .htaccess
+[2]  .gitignore
+[3]  GITHUB_UPLOAD_COMPLETE.md
+[4]  INSTALLATION.md
+[5]  LICENSE
+[6]  PROJECT_SUMMARY.md
+[7]  README.md
+[8]  USER_GUIDE.md
+
+=====================================================
+2. CONFIG/ (2 files)
+=====================================================
+[9]  config/config.php
+[10] config/database.php
+
+=====================================================
+3. DATABASE/ (3 files)
+=====================================================
+[11] database/ERD.md
+[12] database/schema.sql (544 dòng - 22 bảng)
+[13] database/seed.sql (dữ liệu mẫu)
+
+=====================================================
+4. PUBLIC/ (5 files)
+=====================================================
+[14] public/index.php (entry point)
+[15] public/.htaccess
+[16] public/assets/css/style.css
+[17] public/assets/js/main.js
+[18] public/assets/images/.gitkeep
+[19] public/uploads/.gitkeep
+
+=====================================================
+5. APP/CORE/ (4 files)
+=====================================================
+[20] app/core/App.php (MVC Router)
+[21] app/core/Controller.php (Base Controller)
+[22] app/core/Model.php (Base Model)
+[23] app/core/Database.php (PDO Singleton)
+
+=====================================================
+6. APP/HELPERS/ (1 file)
+=====================================================
+[24] app/helpers/functions.php (Helper functions)
+
+=====================================================
+7. APP/CONTROLLERS/ (6 files)
+=====================================================
+[25] app/controllers/Admin.php
+[26] app/controllers/Auth.php
+[27] app/controllers/Courses.php
+[28] app/controllers/Home.php
+[29] app/controllers/Student.php
+[30] app/controllers/Teacher.php
+
+=====================================================
+8. APP/MODELS/ (2 files)
+=====================================================
+[31] app/models/Course.php
+[32] app/models/User.php
+
+=====================================================
+9. APP/VIEWS/LAYOUTS/ (3 files)
+=====================================================
+[33] app/views/layouts/header.php
+[34] app/views/layouts/navbar.php
+[35] app/views/layouts/footer.php
+
+=====================================================
+10. APP/VIEWS/AUTH/ (2 files)
+=====================================================
+[36] app/views/auth/login.php
+[37] app/views/auth/register.php
+
+=====================================================
+11. APP/VIEWS/HOME/ (1 file)
+=====================================================
+[38] app/views/home/index.php
+
+=====================================================
+12. APP/VIEWS/STUDENT/ (4 files)
+=====================================================
+[39] app/views/student/dashboard.php
+[40] app/views/student/sidebar.php
+[41] app/views/student/my-courses.php
+[42] app/views/student/badges.php
+
+=====================================================
+13. APP/VIEWS/TEACHER/ (2 files)
+=====================================================
+[43] app/views/teacher/dashboard.php
+[44] app/views/teacher/sidebar.php
+
+=====================================================
+14. APP/VIEWS/ADMIN/ (2 files)
+=====================================================
+[45] app/views/admin/dashboard.php
+[46] app/views/admin/sidebar.php
+
+=====================================================
+15. APP/VIEWS/COURSES/ (2 files)
+=====================================================
+[47] app/views/courses/index.php
+[48] app/views/courses/view.php
+
+=====================================================
+TỔNG KẾT
+=====================================================
+
+✅ PHP Files: 32 files
+   - Controllers: 6 files
+   - Models: 2 files
+   - Core: 4 files
+   - Views: 16 files
+   - Helpers: 1 file
+   - Entry point: 1 file
+   - Config: 2 files
+
+✅ SQL Files: 2 files
+   - schema.sql (544 dòng)
+   - seed.sql (dữ liệu mẫu)
+
+✅ CSS/JS: 2 files
+   - style.css
+   - main.js
+
+✅ Documentation: 6 files
+   - README.md
+   - INSTALLATION.md
+   - USER_GUIDE.md
+   - PROJECT_SUMMARY.md
+   - GITHUB_UPLOAD_COMPLETE.md
+   - database/ERD.md
+
+✅ Config Files: 4 files
+   - .htaccess (2 files)
+   - .gitignore
+   - LICENSE
+
+✅ Placeholder: 2 files
+   - .gitkeep files
+
+=====================================================
+CÁCH KIỂM TRA TRÊN GITHUB
+=====================================================
+
+1. Truy cập: https://github.com/dzduu562-tech/code-web
+
+2. Chuyển sang branch: cursor/build-school-e-learning-website-c73d
+
+3. Bạn sẽ thấy cấu trúc thư mục:
+   📁 app/
+   📁 config/
+   📁 database/
+   📁 public/
+   📄 README.md
+   📄 INSTALLATION.md
+   📄 USER_GUIDE.md
+   ... và các file khác
+
+4. Để xem tất cả file, click vào từng thư mục
+
+=====================================================
+NẾU VẪN CHƯA THẤY FILE
+=====================================================
+
+Thử các cách sau:
+
+1. REFRESH trang GitHub (Ctrl+F5 hoặc Cmd+Shift+R)
+
+2. Clear cache browser và reload
+
+3. Kiểm tra lại branch đã đúng chưa:
+   - Phải là: cursor/build-school-e-learning-website-c73d
+   - KHÔNG phải branch main
+
+4. Clone về máy để kiểm tra:
+   git clone https://github.com/dzduu562-tech/code-web.git
+   cd code-web
+   git checkout cursor/build-school-e-learning-website-c73d
+   ls -la
+
+5. Xem commit history:
+   - Click "commits" trên GitHub
+   - Sẽ thấy 3 commits:
+     * 6c7ca03 - Add GitHub upload completion report
+     * 5172717 - Complete E-Learning Platform
+     * cad5bad - Initialize E-Learning Platform
+
+=====================================================
+LINK TRỰC TIẾP ĐẾN BRANCH
+=====================================================
+
+https://github.com/dzduu562-tech/code-web/tree/cursor/build-school-e-learning-website-c73d
+
+Bạn có thể truy cập link này để xem trực tiếp branch đã upload!
+
+=====================================================

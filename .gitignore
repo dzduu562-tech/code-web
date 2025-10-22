@@ -1,0 +1,86 @@
+# E-Learning Platform - .gitignore
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Configuration (if contains sensitive data)
+# config/database.php
+
+# Uploads (user-generated content)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Logs
+*.log
+logs/
+xampp/logs/
+
+# Cache
+cache/
+tmp/
+temp/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+*.tmproj
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Node modules (if using npm for frontend tools)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Composer (if using)
+vendor/
+composer.lock
+
+# Database dumps (except schema)
+*.sql
+!database/schema.sql
+!database/seed.sql
+
+# Session files
+sessions/
+
+# Error logs
+error_log
+php_error.log
+
+# Compiled files
+*.compiled
+
+# Test files
+tests/coverage/
+.phpunit.result.cache
+
+# Documentation build
+docs/_build/
+
+# Sensitive data
+credentials.txt
+passwords.txt

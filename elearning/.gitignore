@@ -1,0 +1,62 @@
+# E-Learning Platform - Git Ignore
+
+# Configuration files (chứa thông tin nhạy cảm)
+config/config.php
+
+# Upload files (do người dùng tạo)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Log files
+*.log
+logs/
+
+# Cache files
+cache/
+tmp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Database dumps
+*.sql.gz
+*.sql.bak
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Composer (if used in future)
+vendor/
+composer.lock
+
+# Node modules (if used in future)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build files
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
